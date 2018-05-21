@@ -1,0 +1,75 @@
+from random import randint
+def guessnum():
+    all_data = []
+    players = []
+    try:
+        with open('guessgame.txt')as f:
+            for lines in f.readlines():
+                all_data.append(lines.split())
+        for i in all_data:
+            players.append(i[0])
+        # print(all_data)
+        # print(players)
+    # except:
+
+    finally:
+        user_name = input('请输入您的用户名：')
+        ex_p = False
+        if user_name in players:
+            ex_p = True
+            print('欢迎%s回来！'% user_name)
+        else:
+            ex_p = False
+            print('欢迎新用户%s'% user_name)
+            players.append(user_name)
+            print(players)
+        ran_num = randint(1, 100)
+        time = 0
+        guess = True
+        all_time = []
+        while guess:
+            try:
+                num_guess = int(input('请输入猜测的数字（1-100）：'))
+            except:
+                print('请输入1至100的整数！')
+                continue
+            print('第%s次猜测'% (time+1))
+            if num_guess > ran_num:
+                time += 1
+                print('%s大了'%num_guess)
+            elif num_guess < ran_num:
+                time += 1
+                print('%s小了'% num_guess)
+            else:
+                time += 1
+                all_time.append(time)
+                print('BINGO!%s是正确答案'% num_guess)
+                # guess = False
+                print('恭喜猜对！游戏已结束！')
+                againp = input('是否再次进行游戏？Y or N')
+                if againp == 'Y':
+                    guess = True
+                    time = 0
+                    ran_num = randint(1, 100)
+                else:
+                    guess = False
+                    turn = all_time.__len__()
+                    avg = sum(all_time)/all_time.__len__()
+                    print('游戏已退出！')
+                    print('您已经进行了%s轮游戏， 平均%s次猜中数字'%(turn, avg))
+                    print(players)
+                    if ex_p:
+                        allturn = int(all_data[players.index(user_name)][1]) + turn
+                        alltimes = int(all_data[players.index(user_name)][1])*float(all_data[players.index(user_name)][2]) + sum(all_time)
+                        all_data[players.index(user_name)] =  [user_name, allturn, alltimes]
+                    else:
+                        all_data.append([user_name, str(turn), str(avg)])
+                    print(all_data)
+    with open('guessgame.txt', 'w')as f:
+        for users in all_data:
+            for ev in users:
+                # userdata = ''.join(ev + '')
+                f.write(ev + ' ')
+            f.write('\n')
+
+guessnum()
